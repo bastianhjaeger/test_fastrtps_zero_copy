@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- DDS configuration for the MicroXRCEAgent -->
+<dds>
+    <profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>custom_shm_transport</transport_id>
+                <type>SHM</type>
+                <segment_size>104857600</segment_size> <!-- 100 MB -->
+                <port_queue_capacity>10</port_queue_capacity>
+                <healthy_check_timeout_ms>500</healthy_check_timeout_ms>
+            </transport_descriptor>
+            <transport_descriptor>
+                <transport_id>custom_udp_transport</transport_id>
+                <type>UDPv4</type>
+                <!-- Expose DDS data only to docker containers (when using UDP) -->
+            </transport_descriptor>
+        </transport_descriptors>
+        <!-- Default publisher profile (Data Sharing / Zero-Copy when possible) -->
+        <data_writer profile_name="default_publisher_profile" is_default_profile="true">
+            <qos>
+                <publishMode>
+                    <kind>SYNCHRONOUS</kind>
+                </publishMode>
+                <data_sharing>
+                    <kind>AUTOMATIC</kind>
+                </data_sharing>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </data_writer>
+        <!-- Default subscriber profile (Data Sharing / Zero-Copy when possible) -->
+        <data_reader profile_name="default_subscriber_profile" is_default_profile="true">
+            <qos>
+                <data_sharing>
+                    <kind>AUTOMATIC</kind>
+                </data_sharing>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </data_reader>
+        <!-- "my_participant" is used by me to reference this configuration -->
+        <participant profile_name="my_participant" is_default_profile="true">
+            <rtps>
+                <userTransports>
+                    <transport_id>custom_shm_transport</transport_id>
+                    <transport_id>custom_udp_transport</transport_id>
+                </userTransports>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+    </profiles>
+</dds>
